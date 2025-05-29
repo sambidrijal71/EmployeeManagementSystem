@@ -1,0 +1,31 @@
+# .NET build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.vs/
+
+# Rider & VS Code
+.idea/
+.vscode/
+
+# Test results
+TestResults/
+*.coverage
+*.trx
+
+# User secrets
+secrets.json
+
+# React/Node (if frontend exists in ClientApp/)
+client/node_modules/
+client/build/
+client/dist/
+
+# Logs
+*.log
+*.nlog
+*.out
