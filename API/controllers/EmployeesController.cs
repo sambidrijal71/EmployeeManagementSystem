@@ -35,6 +35,11 @@ namespace API.controllers
         [HttpPost]
         public async Task<ActionResult> AddEmployee([FromBody] EmployeeDto employeeDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var newEmployee = new Employee
             {
                 FirstName = employeeDto.FirstName,

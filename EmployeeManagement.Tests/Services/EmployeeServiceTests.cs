@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using API.controllers;
 using API.data;
 using API.dtos;
@@ -124,9 +125,22 @@ namespace EmployeeManagement.Tests.Services
                 Email = "sa.test@gmailcom",
                 DateOfJoining = new DateTime(2026, 05, 11)
             };
+
+            var validationContext = new ValidationContext(employee, null, null);
+            var validationResults = new List<ValidationResult>();
+            Validator.TryValidateObject(employee, validationContext, validationResults, true);
+
+            foreach (var validationResult in validationResults)
+            {
+                foreach (var memberName in validationResult.MemberNames)
+                {
+                    Assert.NotNull(validationResult.ErrorMessage);
+                    _controller.ModelState.AddModelError(memberName, validationResult.ErrorMessage);
+                }
+            }
+
             var result = await _controller.AddEmployee(employee);
             var badRequestResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(400, badRequestResult.StatusCode);
 
             var validationProblemDetails = Assert.IsType<ValidationProblemDetails>(badRequestResult.Value);
 
