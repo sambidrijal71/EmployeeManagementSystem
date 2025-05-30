@@ -51,7 +51,7 @@ namespace EmployeeManagement.Tests.Services
         }
 
         [Fact]
-        public async Task GetAllEmployees_ReturnsEmployees()
+        public async Task GetAllEmployeesValidScenario()
         {
             // Act
             var result = await _controller.GetAllEmployees();
@@ -68,6 +68,16 @@ namespace EmployeeManagement.Tests.Services
             Assert.Equal("John", employees.First().FirstName);
             Assert.NotNull(result);
             Assert.NotEmpty(employees);
+        }
+
+        [Fact]
+        public async Task GetAllEmployeesNotFound()
+        {
+            var result = await _controller.GetAllEmployees();
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var employees = Assert.IsAssignableFrom<IEnumerable<Employee>>(okResult.Value);
+
+            Assert.NotEqual("Test", employees.First().FirstName);
         }
 
         [Fact]
@@ -92,7 +102,7 @@ namespace EmployeeManagement.Tests.Services
         public async Task CreateNewEmployee()
         {
             var employee =
-                new Employee
+                new EmployeeDto
                 {
                     FirstName = "Sammy",
                     LastName = "Sopm",
@@ -101,7 +111,29 @@ namespace EmployeeManagement.Tests.Services
                 };
 
             var result = await _controller.AddEmployee(employee);
-            Assert.IsType<CreatedResult>(result);
+            Assert.IsType<CreatedAtActionResult>(result);
+        }
+
+        [Fact]
+        public async Task CreateEmployeeWithInvalidDetails()
+        {
+            var employee = new EmployeeDto
+            {
+                FirstName = "aaaaaadddda",
+                LastName = "Tesdddddddddt",
+                Email = "sa.test@gmailcom",
+                DateOfJoining = new DateTime(2026, 05, 11)
+            };
+            var result = await _controller.AddEmployee(employee);
+            var badRequestResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var validationProblemDetails = Assert.IsType<ValidationProblemDetails>(badRequestResult.Value);
+
+            Assert.Contains("Invalid email format.", validationProblemDetails.Errors["Email"]);
+            Assert.Contains("Firstname should be with in 8 characters.", validationProblemDetails.Errors["FirstName"]);
+            Assert.Contains("Lastname should be with in 8 characters.", validationProblemDetails.Errors["LastName"]);
+            Assert.Contains("Date of Joining cannot be in the future.", validationProblemDetails.Errors["DateOfJoining"]);
         }
 
         [Fact]

@@ -33,19 +33,19 @@ namespace API.controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddEmployee([FromBody] Employee employee)
+        public async Task<ActionResult> AddEmployee([FromBody] EmployeeDto employeeDto)
         {
             var newEmployee = new Employee
             {
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                Email = employee.Email,
-                DateOfJoining = employee.DateOfJoining,
+                FirstName = employeeDto.FirstName,
+                LastName = employeeDto.LastName,
+                Email = employeeDto.Email,
+                DateOfJoining = employeeDto.DateOfJoining,
 
             };
             await _context.AddAsync(newEmployee);
             var result = await _context.SaveChangesAsync() > 0;
-            if (result) return Created();
+            if (result) return CreatedAtAction(nameof(GetEmployee), new { id = newEmployee.Id }, newEmployee);
             return BadRequest();
         }
 
