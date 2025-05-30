@@ -1,5 +1,6 @@
 using API.controllers;
 using API.data;
+using API.dtos;
 using API.models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,9 @@ namespace EmployeeManagement.Tests.Services
         private readonly EmployeesController _controller;
         public EmployeeServiceTests()
         {
-            var options = new DbContextOptionsBuilder<StoreContext>().UseInMemoryDatabase(databaseName: "storeDb").Options;
+            var options = new DbContextOptionsBuilder<StoreContext>()
+       .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Ensures isolation
+       .Options;
             _context = new StoreContext(options);
             _context.Database.EnsureCreated();
 
@@ -68,7 +71,7 @@ namespace EmployeeManagement.Tests.Services
         }
 
         [Fact]
-        public async Task GetEmployeeValidId()
+        public async Task GetEmployeeWithValidId()
         {
             var result = await _controller.GetEmployee(1);
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -79,10 +82,66 @@ namespace EmployeeManagement.Tests.Services
         }
 
         [Fact]
-        public async Task GetEmployeeInvalidId()
+        public async Task GetEmployeeWithInvalidId()
         {
             var result = await _controller.GetEmployee(3);
             Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task CreateNewEmployee()
+        {
+            var employee =
+                new Employee
+                {
+                    FirstName = "Sammy",
+                    LastName = "Sopm",
+                    Email = "sammysopm@test.com",
+                    DateOfJoining = new DateTime(2023, 05, 23)
+                };
+
+            var result = await _controller.AddEmployee(employee);
+            Assert.IsType<CreatedResult>(result);
+        }
+
+        [Fact]
+        public async Task UpdateEmployee()
+        {
+            var getResult = await _controller.GetEmployee(1);
+            var okResult = Assert.IsType<OkObjectResult>(getResult.Result);
+            var employee = Assert.IsType<Employee>(okResult.Value);
+            Assert.Equal("John", employee.FirstName);
+
+            var updatedDto = new EmployeeDto
+            {
+                FirstName = "UpdatedJohn",
+                LastName = "UpdatedDoe",
+                Email = employee.Email,
+                DateOfJoining = employee.DateOfJoining
+            };
+
+            var updatedResult = await _controller.EditEmployeeDetails(1, updatedDto);
+            Assert.IsType<NoContentResult>(updatedResult);
+
+            var newResult = await _controller.GetEmployee(1);
+            var updatedOk = Assert.IsType<OkObjectResult>(newResult.Result);
+            var updatedEmployee = Assert.IsType<Employee>(updatedOk.Value);
+
+            Assert.Equal("UpdatedJohn", updatedEmployee.FirstName);
+            Assert.Equal("UpdatedDoe", updatedEmployee.LastName);
+        }
+
+        [Fact]
+        public async Task DeleteEmployee()
+        {
+            var existingEmployee = await _controller.GetEmployee(1);
+            Assert.IsType<OkObjectResult>(existingEmployee.Result);
+
+            var deleteResult = await _controller.DeleteEmployee(1);
+            Assert.IsType<OkResult>(deleteResult.Result);
+
+            var deleteAfter = await _controller.GetEmployee(1);
+            Assert.IsType<NotFoundResult>(deleteAfter.Result);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace API.controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Employee>> AddEmployee([FromBody] Employee employee)
+        public async Task<ActionResult> AddEmployee([FromBody] Employee employee)
         {
             var newEmployee = new Employee
             {
@@ -50,7 +50,7 @@ namespace API.controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Employee>> EditEmployeeDetails(int id, [FromBody] EmployeeDto employeeDto)
+        public async Task<ActionResult> EditEmployeeDetails(int id, [FromBody] EmployeeDto employeeDto)
         {
             var existingEmployee = await _context.Employees.FirstOrDefaultAsync(eid => eid.Id == id);
             if (existingEmployee == null) return NotFound();
