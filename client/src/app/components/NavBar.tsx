@@ -1,6 +1,11 @@
-import { Box, AppBar, Toolbar, Typography } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, ButtonGroup } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import { useAppSelector } from '../store/store';
+import { DarkMode, LightMode } from '@mui/icons-material';
 
+interface Props {
+  handleThemeChange: () => void;
+}
 const navStyle = {
   typography: 'h6',
   textDecoration: 'none',
@@ -13,9 +18,10 @@ const navStyle = {
   },
 };
 
-const NavBar = () => {
+const NavBar = ({ handleThemeChange }: Props) => {
+  const { darkMode } = useAppSelector((state) => state.uiSlice);
   return (
-    <AppBar position='static' sx={{ mb: 4 }}>
+    <AppBar position='fixed'>
       <Toolbar
         sx={{
           display: 'flex',
@@ -23,10 +29,17 @@ const NavBar = () => {
           alignItems: 'center',
         }}
       >
-        <Box display={'flex'}>
+        <Box
+          display={'flex'}
+          justifyContent={'space-between'}
+          alignItems={'center'}
+        >
           <Typography variant='h6' sx={navStyle} component={NavLink} to='/'>
             EMS
           </Typography>
+          <ButtonGroup onClick={handleThemeChange} sx={{ paddingLeft: 2 }}>
+            {darkMode ? <DarkMode /> : <LightMode sx={{ color: 'yellow' }} />}
+          </ButtonGroup>
         </Box>
         <Box>
           <Typography

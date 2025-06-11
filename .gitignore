@@ -30,3 +30,4 @@ client/dist/
 *.nlog
 *.out
 API/store.db
+API/store.db
