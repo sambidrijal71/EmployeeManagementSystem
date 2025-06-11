@@ -14,7 +14,7 @@ export const employeeApi = createApi({
     }),
     getEmployeeDetail: builder.query<Employee, number>({
       query: (id) => `/employees/${id}`,
-      providesTags: ['Employee'],
+      providesTags: (result, error, id) => [{ type: 'Employee', id }],
     }),
     deleteEmployee: builder.mutation<void, number>({
       query: (id) => ({
@@ -95,7 +95,9 @@ export const employeeApi = createApi({
           toast.error('Failed to update employee');
         }
       },
-      invalidatesTags: ['Employee'],
+      invalidatesTags: (result, error, employee) => [
+        { type: 'Employee', id: employee.id },
+      ],
     }),
   }),
 });

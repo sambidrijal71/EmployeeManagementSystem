@@ -7,6 +7,7 @@ import LoginPage from '../features/login/LoginPage';
 import RegisterPage from '../features/register/RegisterPage';
 import NotFoundPage from '../features/errors/NotFoundPage';
 import AddEmployeePage from '../features/employee/AddEmployeePage';
+import ServerErrorPage from '../features/errors/ServerErrorPage';
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: '/employees/add-employee', element: <AddEmployeePage /> },
       { path: '/employees/:id', element: <EmployeeDetailPage /> },
       { path: '/not-found', element: <NotFoundPage /> },
+      { path: '/server-error', element: <ServerErrorPage /> },
       { path: '*', element: <Navigate replace to='/not-found' /> },
     ],
   },

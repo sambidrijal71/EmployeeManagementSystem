@@ -1,3 +1,4 @@
+using System.Net;
 using API.data;
 using API.dtos;
 using API.models;
@@ -27,7 +28,16 @@ namespace API.controllers
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
-            if (employee == null) return NotFound();
+            if (employee == null)
+            {
+                var error = new ProblemDetails
+                {
+                    Title = "NotFound",
+                    Status = (int)HttpStatusCode.NotFound,
+                    Detail = $"Employee with Id {id} does not exist."
+                };
+                return NotFound(error);
+            }
             return Ok(employee);
 
         }
