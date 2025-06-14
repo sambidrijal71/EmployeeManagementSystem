@@ -32,9 +32,11 @@ namespace API.middleware
 
                 var problemDetails = new ProblemDetails
                 {
+                    Type = "https://httpstatuses.com/500",
                     Title = _environment.IsDevelopment() ? ex.Message : "An unexpected error occurred",
                     Status = context.Response.StatusCode,
                     Detail = _environment.IsDevelopment() ? ex.StackTrace : "Please contact the admin",
+
                 };
 
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };

@@ -1,6 +1,7 @@
 using System.Net;
 using API.data;
 using API.dtos;
+using API.helper;
 using API.models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,18 +29,8 @@ namespace API.controllers
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
-            if (employee == null)
-            {
-                var error = new ProblemDetails
-                {
-                    Title = "NotFound",
-                    Status = (int)HttpStatusCode.NotFound,
-                    Detail = $"Employee with Id {id} does not exist."
-                };
-                return NotFound(error);
-            }
+            if (employee == null) return NotFound(BuildErrorWithContext(ErrorTemplates.NotFound($"Employee with Id #{id} does not exist.")));
             return Ok(employee);
-
         }
 
         [HttpPost]
@@ -49,7 +40,8 @@ namespace API.controllers
             {
                 return ValidationProblem(ModelState);
             }
-
+            var existingEmployeeEmail = await _context.Employees.FirstOrDefaultAsync(x => x.Email == employeeDto.Email);
+            if (existingEmployeeEmail != null) return BadRequest(BuildErrorWithContext(ErrorTemplates.BadRequest($"Email '{employeeDto.Email}' already exists.")));
             var newEmployee = new Employee
             {
                 FirstName = employeeDto.FirstName,
@@ -61,14 +53,14 @@ namespace API.controllers
             await _context.AddAsync(newEmployee);
             var result = await _context.SaveChangesAsync() > 0;
             if (result) return CreatedAtAction(nameof(GetEmployee), new { id = newEmployee.Id }, newEmployee);
-            return BadRequest();
+            return BadRequest(BuildErrorWithContext(ErrorTemplates.BadRequest("Unable to add the employee. Please check the request.")));
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> EditEmployeeDetails(int id, [FromBody] EmployeeDto employeeDto)
         {
             var existingEmployee = await _context.Employees.FirstOrDefaultAsync(eid => eid.Id == id);
-            if (existingEmployee == null) return NotFound();
+            if (existingEmployee == null) return NotFound(BuildErrorWithContext(ErrorTemplates.NotFound("Employee does not exist. Please create an employee.")));
 
             existingEmployee.FirstName = employeeDto.FirstName;
             existingEmployee.LastName = employeeDto.LastName;
@@ -76,7 +68,7 @@ namespace API.controllers
             existingEmployee.DateOfJoining = employeeDto.DateOfJoining;
 
             var result = await _context.SaveChangesAsync() > 0;
-            if (!result) return NotFound();
+            if (!result) return BadRequest(BuildErrorWithContext(ErrorTemplates.BadRequest("Unable to edit the employee. Please check the request.")));
             return NoContent();
 
         }
@@ -88,7 +80,7 @@ namespace API.controllers
             if (existingEmployee == null) return NotFound();
             _context.Remove(existingEmployee);
             var result = await _context.SaveChangesAsync() > 0;
-            if (!result) return NotFound();
+            if (!result) return NotFound("Unable to delete the employee.Please check the request.");
             return Ok();
         }
     }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.dtos
@@ -17,7 +18,8 @@ namespace API.dtos
         public required String Email { get; set; }
 
         [Required]
-        [CustomValidators.DateNotInFutureAttribute(ErrorMessage = "Date of Joining cannot be in the future.")]
+        [CustomValidators.DateNotInFutureAttribute]
+        [DisplayName("Date of Joining")]
         public DateTime DateOfJoining { get; set; }
     }
 }

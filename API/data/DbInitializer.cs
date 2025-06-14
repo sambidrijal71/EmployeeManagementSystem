@@ -10,11 +10,11 @@ namespace API.data
 
             var employees = new List<Employee>
             {
-                new() {FirstName = "Jerry", LastName="Chen", Email="jerrychen@gmail.com", DateOfJoining=new DateTime(1990, 01, 15)},
-                new() {FirstName = "Chris", LastName="Adams", Email="chrisadams@gmail.com", DateOfJoining=new DateTime(1991, 01, 15)},
-                new() {FirstName = "Adam", LastName="Perry", Email="adamperry@gmail.com", DateOfJoining=new DateTime(1988, 01, 15)},
-                new() {FirstName = "Kate", LastName="Homming", Email="katehomming@gmail.com", DateOfJoining=new DateTime(1982, 01, 15)},
-                new() {FirstName = "Yorick", LastName="Block", Email="yorickblock@gmail.com", DateOfJoining=new DateTime(1986, 01, 15)},
+                new() {FirstName = "Jerry", LastName="Chen", Email="jerrychen@gmail.com", DateOfJoining=new DateTime(1990, 01, 15, 0, 0, 0, DateTimeKind.Utc).Date},
+                new() {FirstName = "Chris", LastName="Adams", Email="chrisadams@gmail.com", DateOfJoining=new DateTime(1991, 01, 15, 0, 0, 0, DateTimeKind.Utc).Date},
+                new() {FirstName = "Adam", LastName="Perry", Email="adamperry@gmail.com", DateOfJoining=new DateTime(1988, 01, 15, 0, 0, 0, DateTimeKind.Utc).Date},
+                new() {FirstName = "Kate", LastName="Homming", Email="katehomming@gmail.com", DateOfJoining=new DateTime(1982, 01, 15, 0, 0, 0, DateTimeKind.Utc).Date},
+                new() {FirstName = "Yorick", LastName="Block", Email="yorickblock@gmail.com", DateOfJoining=new DateTime(1986, 01, 15, 0, 0, 0, DateTimeKind.Utc).Date},
             };
 
 

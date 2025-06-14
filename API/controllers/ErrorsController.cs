@@ -1,3 +1,4 @@
+using API.models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.controllers
@@ -7,28 +8,27 @@ namespace API.controllers
         [HttpGet("not-found")]
         public IActionResult GetNotFoundError()
         {
-            var problemDetails = new ProblemDetails
+            return NotFound(new ApiError
             {
                 Title = "Resource not found",
-                Status = StatusCodes.Status404NotFound,
+                StatusCode = StatusCodes.Status404NotFound,
                 Detail = "The requested resource could not be found.",
-
-            };
-
-            return NotFound(problemDetails);
+                Path = HttpContext.Request.Path,
+                TraceId = HttpContext.TraceIdentifier
+            });
         }
 
         [HttpGet("bad-request")]
         public IActionResult GetBadRequestError()
         {
-            var problemDetails = new ProblemDetails
+            return BadRequest(new ApiError
             {
                 Title = "Bad request provided",
-                Status = StatusCodes.Status400BadRequest,
+                StatusCode = StatusCodes.Status400BadRequest,
                 Detail = "This is a bad request, please check your request.",
-            };
-
-            return BadRequest(problemDetails);
+                Path = HttpContext.Request.Path,
+                TraceId = HttpContext.TraceIdentifier
+            });
         }
 
         [HttpGet("validation")]
@@ -42,15 +42,14 @@ namespace API.controllers
         [HttpGet("unauthorized")]
         public IActionResult GetUnAuthorizedError()
         {
-            var problemDetails = new ProblemDetails
+            return Unauthorized(new ApiError
             {
                 Title = "Unauthorized access",
-                Status = StatusCodes.Status401Unauthorized,
+                StatusCode = StatusCodes.Status401Unauthorized,
                 Detail = "The content you are trying to view is unauthorized.",
-
-            };
-
-            return Unauthorized(problemDetails);
+                Path = HttpContext.Request.Path,
+                TraceId = HttpContext.TraceIdentifier
+            });
         }
 
         [HttpGet("server-error")]
