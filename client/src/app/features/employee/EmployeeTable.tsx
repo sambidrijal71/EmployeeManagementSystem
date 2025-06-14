@@ -21,7 +21,7 @@ import {
   useEditEmployeeMutation,
 } from './employeeApi';
 import EmployeeForm from '../../components/EmployeeForm';
-import type { FieldValues } from 'react-hook-form';
+import type { FieldValues, UseFormSetError } from 'react-hook-form';
 
 interface Props {
   employees: Employee[];
@@ -35,18 +35,30 @@ const EmployeeTable = ({ employees }: Props) => {
   );
   const [deleteEmployee] = useDeleteEmployeeMutation();
   const [editEmployee, { isLoading }] = useEditEmployeeMutation();
+  const [, setIsFormDirty] = useState(false);
 
   const handleYesAction = (id: number) => {
     deleteEmployee(id);
     dispatch(setOpenDeleteModal(false));
   };
 
-  const onSubmit = async (data: FieldValues) => {
+  const onSubmit = async (
+    data: FieldValues,
+    setError: UseFormSetError<Employee>
+  ) => {
     try {
       await editEmployee({ id: employeeId, data }).unwrap();
       dispatch(setOpenEditModal(false));
-    } catch (error) {
-      console.log(error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const newError = error.message.split(', ');
+      newError.forEach((error: string) => {
+        if (error.includes('First')) setError('firstName', { message: error });
+        if (error.includes('Last')) setError('lastName', { message: error });
+        if (error.includes('Email')) setError('email', { message: error });
+        if (error.includes('Date'))
+          setError('dateOfJoining', { message: error });
+      });
     }
   };
   return (
@@ -58,6 +70,7 @@ const EmployeeTable = ({ employees }: Props) => {
             employeeId={employeeId}
             onSubmit={onSubmit}
             isLoading={isLoading}
+            onDirtyChange={setIsFormDirty}
           />
         </Container>
       ) : (

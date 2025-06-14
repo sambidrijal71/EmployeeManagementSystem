@@ -10,21 +10,32 @@ import {
   Button,
   IconButton,
 } from '@mui/material';
-import { useForm, type FieldValues } from 'react-hook-form';
+import { useForm, UseFormSetError, type FieldValues } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../store/store';
 import { setOpenEditModal } from '../layout/uiSlice';
 import { useEffect } from 'react';
 import { useGetEmployeeDetailQuery } from '../features/employee/employeeApi';
+import { Employee } from '../models/Employee';
 
 interface Props {
   message: string;
-  onSubmit: (data: FieldValues) => Promise<void>;
+  onSubmit: (
+    data: FieldValues,
+    setError: UseFormSetError<Employee>
+  ) => Promise<void>;
   isLoading: boolean;
   employeeId?: number;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
-const EmployeeForm = ({ onSubmit, isLoading, message, employeeId }: Props) => {
+const EmployeeForm = ({
+  onSubmit,
+  isLoading,
+  message,
+  employeeId,
+  onDirtyChange,
+}: Props) => {
   const { data: employee } = useGetEmployeeDetailQuery(employeeId!, {
     skip: !employeeId,
   });
@@ -32,16 +43,17 @@ const EmployeeForm = ({ onSubmit, isLoading, message, employeeId }: Props) => {
   const {
     register,
     handleSubmit,
+    setError,
     reset,
-    formState: { errors, isValid },
-  } = useForm({
+    formState: { errors, isValid, isDirty },
+  } = useForm<Employee>({
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      dateOfJoining: '',
+      firstName: 'Sambid Prasad',
+      lastName: 'Hello Boys',
+      email: 'aasdasdas@b.com',
+      dateOfJoining: '2025-05-14',
     },
-    mode: 'onTouched',
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -54,6 +66,10 @@ const EmployeeForm = ({ onSubmit, isLoading, message, employeeId }: Props) => {
       });
     }
   }, [employee, reset]);
+
+  useEffect(() => {
+    if (onDirtyChange) onDirtyChange(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -90,7 +106,7 @@ const EmployeeForm = ({ onSubmit, isLoading, message, employeeId }: Props) => {
         <Box
           component='form'
           noValidate
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit((data) => onSubmit(data, setError))}
           sx={{ mt: 3 }}
         >
           <Grid container spacing={2}>
@@ -198,7 +214,7 @@ const EmployeeForm = ({ onSubmit, isLoading, message, employeeId }: Props) => {
             fullWidth
             variant='contained'
             sx={{ mt: 3, mb: 2 }}
-            disabled={!isValid}
+            disabled={!isValid || !isDirty}
             loading={isLoading}
           >
             {employeeId ? 'Update Employee' : 'Add Employee'}

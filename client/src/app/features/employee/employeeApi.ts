@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import type { Employee } from '../../models/Employee';
 import { baseQueryWithErrorHandling } from '../../api/baseApi';
 import { toast } from 'react-toastify';
+import { Employee } from '../../models/Employee';
 
 export const employeeApi = createApi({
   reducerPath: 'employeeApi',
@@ -59,7 +59,6 @@ export const employeeApi = createApi({
               }
             )
           );
-          toast.success('Employee added successfully.');
         } catch (err) {
           console.log(err);
         }
@@ -76,28 +75,26 @@ export const employeeApi = createApi({
         method: 'PUT',
         body: data,
       }),
-      onQueryStarted: async ({ id }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async ({ id, data }, { dispatch, queryFulfilled }) => {
+        const patchResult = dispatch(
+          employeeApi.util.updateQueryData(
+            'getEmployees',
+            undefined,
+            (draft) => {
+              const index = draft.findIndex((emp) => emp.id === id);
+              if (index !== -1) draft[index] = { ...draft[index], ...data };
+            }
+          )
+        );
         try {
-          const { data: updatedEmployee } = await queryFulfilled;
-          dispatch(
-            employeeApi.util.updateQueryData(
-              'getEmployees',
-              undefined,
-              (draft) => {
-                const index = draft.findIndex((emp) => emp.id == id);
-                if (index !== -1) draft[index] = updatedEmployee;
-              }
-            )
-          );
+          await queryFulfilled;
           toast.success('Employee updated successfully');
         } catch (error) {
           console.log(error);
-          toast.error('Failed to update employee');
+          patchResult.undo();
         }
       },
-      invalidatesTags: (result, error, employee) => [
-        { type: 'Employee', id: employee.id },
-      ],
+      invalidatesTags: ['Employee'],
     }),
   }),
 });
