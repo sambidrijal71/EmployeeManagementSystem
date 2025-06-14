@@ -5,8 +5,7 @@ import {
 } from '@reduxjs/toolkit/query';
 import { toast } from 'react-toastify';
 import { router } from '../routes/router';
-
-type ErrorResponse = { title: string } | { errors: string[] };
+import { BackendError } from './BackendError';
 
 const customBaseQuery = fetchBaseQuery({
   baseUrl: 'http://localhost:5000/api',
@@ -20,14 +19,13 @@ export const baseQueryWithErrorHandling = async (
   const result = await customBaseQuery(args, api, extraOptions);
   if (result.error) {
     const { status } = result.error;
-    const errorData = result.error.data as ErrorResponse;
-    console.log(result.error);
+    const errorData = result.error.data as BackendError;
     switch (status) {
       case 400: {
-        if ('errors' in errorData) {
+        if (errorData?.errors && typeof errorData.errors === 'object') {
           throw Object.values(errorData.errors).flat().join(', ');
         } else if (typeof errorData === 'object' && 'title' in errorData) {
-          toast.error(errorData.title);
+          throw new Error(errorData.detail);
         }
         break;
       }
