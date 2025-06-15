@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest",
+    "employeePage": "jest src/app/features/employee/EmployeePage.test.tsx",
+    "firstTest": "jest src/app/components/FirstTest.test.tsx"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -22,7 +25,8 @@
     "react-hook-form": "^7.57.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.1",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

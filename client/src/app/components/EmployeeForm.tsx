@@ -6,7 +6,6 @@ import {
   Avatar,
   Typography,
   Grid,
-  TextField,
   Button,
   IconButton,
 } from '@mui/material';
@@ -17,6 +16,13 @@ import { setOpenEditModal } from '../layout/uiSlice';
 import { useEffect } from 'react';
 import { useGetEmployeeDetailQuery } from '../features/employee/employeeApi';
 import { Employee } from '../models/Employee';
+import FormInput from './FormInput';
+import {
+  dateOfJoiningRules,
+  emailAddressRules,
+  firstNameRules,
+  lastNameRules,
+} from '../features/errors/FormInputValidationErrors';
 
 interface Props {
   message: string;
@@ -41,11 +47,11 @@ const EmployeeForm = ({
   });
 
   const {
-    register,
     handleSubmit,
     setError,
+    control,
     reset,
-    formState: { errors, isValid, isDirty },
+    formState: { isValid, isDirty },
   } = useForm<Employee>({
     defaultValues: {
       firstName: 'Sambid Prasad',
@@ -111,101 +117,39 @@ const EmployeeForm = ({
         >
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                slotProps={{ inputLabel: { shrink: true } }}
-                {...register('firstName', {
-                  required: 'First Name is required',
-                  maxLength: {
-                    value: 30,
-                    message: 'First Name cannot be more than 30 characters',
-                  },
-                  pattern: {
-                    value: /^[A-Z][A-Za-z0-9_-]/,
-                    message: 'First letter should be capital',
-                  },
-                })}
-                fullWidth
-                id='firstName'
+              <FormInput<Employee>
+                name='firstName'
                 label='First Name'
-                autoFocus
-                error={!!errors.firstName}
-                helperText={
-                  typeof errors.firstName?.message === 'string'
-                    ? errors.firstName?.message
-                    : ''
-                }
+                control={control}
+                rules={firstNameRules}
+                textFieldProps={{ slotProps: { inputLabel: { shrink: true } } }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                slotProps={{ inputLabel: { shrink: true } }}
-                {...register('lastName', {
-                  required: 'Last Name is required',
-                  maxLength: {
-                    value: 30,
-                    message: 'Last Name cannot be more than 30 characters',
-                  },
-                  pattern: {
-                    value: /^[A-Z][A-Za-z0-9_-]/,
-                    message: 'First letter should be capital',
-                  },
-                })}
-                fullWidth
-                id='lastName'
+              <FormInput<Employee>
+                name='lastName'
                 label='Last Name'
-                autoComplete='family-name'
-                error={!!errors.lastName}
-                helperText={
-                  typeof errors.lastName?.message === 'string'
-                    ? errors.lastName.message
-                    : ''
-                }
+                rules={lastNameRules}
+                control={control}
+                textFieldProps={{ slotProps: { inputLabel: { shrink: true } } }}
               />
             </Grid>
             <Grid size={{ xs: 12 }}>
-              <TextField
-                slotProps={{ inputLabel: { shrink: true } }}
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value:
-                      /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim,
-                    message: 'Invalid email format',
-                  },
-                })}
-                fullWidth
-                id='email'
+              <FormInput<Employee>
+                name='email'
                 label='Email Address'
-                autoComplete='email'
-                error={!!errors.email}
-                helperText={
-                  typeof errors.email?.message === 'string'
-                    ? errors.email?.message
-                    : ''
-                }
+                control={control}
+                rules={emailAddressRules}
+                textFieldProps={{ slotProps: { inputLabel: { shrink: true } } }}
               />
             </Grid>
             <Grid size={{ xs: 12 }}>
-              <TextField
-                slotProps={{ inputLabel: { shrink: true } }}
-                {...register('dateOfJoining', {
-                  required: 'Date of Joining is required',
-                  pattern: {
-                    value:
-                      /^(19\d{2}|2\d{3})-(0[1-9]|1[012])-([123]0|[012][1-9]|31)$/,
-                    message: 'Date should be in YYYY/MM/DD',
-                  },
-                })}
+              <FormInput
+                name='dateOfJoining'
                 label='Date of Joining'
-                id='dateOfJoining'
-                placeholder='YYYY/MM/DD'
-                type='date'
-                error={!!errors.dateOfJoining}
-                helperText={
-                  typeof errors.dateOfJoining?.message === 'string'
-                    ? errors.dateOfJoining?.message
-                    : ''
-                }
+                rules={dateOfJoiningRules}
+                control={control}
+                textFieldProps={{ slotProps: { inputLabel: { shrink: true } } }}
               />
             </Grid>
           </Grid>
