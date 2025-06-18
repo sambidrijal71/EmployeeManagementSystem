@@ -9,8 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "employeePage": "jest src/app/features/employee/EmployeePage.test.tsx",
-    "firstTest": "jest src/app/components/FirstTest.test.tsx"
+    "employeePage": "jest src/app/features/employee/EmployeePage.test.tsx"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

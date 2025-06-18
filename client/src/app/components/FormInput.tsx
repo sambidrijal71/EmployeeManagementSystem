@@ -11,7 +11,7 @@ interface FormInputProps<T extends FieldValues> {
   name: Path<T>;
   label: string;
   control: Control<T>;
-  rules: RegisterOptions<T, Path<T>>;
+  rules?: RegisterOptions<T, Path<T>>;
   textFieldProps?: TextFieldProps;
 }
 

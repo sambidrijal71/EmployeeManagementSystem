@@ -34,15 +34,3 @@ export const dateOfJoiningRules = {
     message: 'Date should be in YYYY/MM/DD',
   },
 };
-
-export const phoneRules = {
-  required: { value: true, message: 'Phone is required' },
-  pattern: {
-    value: /^\d{10}$/,
-    message: 'Phone must be 10 digits',
-  },
-};
-export const ageRules = {
-  required: { value: true, message: 'Age is required' },
-  pattern: { value: /^\d+$/, message: 'Must be a number' },
-};

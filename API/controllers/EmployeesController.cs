@@ -1,8 +1,9 @@
-using System.Net;
 using API.data;
 using API.dtos;
+using API.extensions;
 using API.helper;
 using API.models;
+using API.requestHelpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +19,12 @@ namespace API.controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Employee>>> GetAllEmployees()
+        public async Task<ActionResult<List<Employee>>> GetAllEmployees([FromQuery] EmployeeParams employeeParams)
         {
-            var employees = await _context.Employees.ToListAsync();
+            var query = _context.Employees.Sort(employeeParams.SortBy).Search(employeeParams.SearchKey).AsQueryable();
+            var employees = await PagedList<Employee>.ToPagedList(query, employeeParams.PageNumber, employeeParams.PageSize);
             if (employees == null) return NotFound();
+            Response.AddPaginationToHeader(employees.MetaData);
             return Ok(employees);
         }
 

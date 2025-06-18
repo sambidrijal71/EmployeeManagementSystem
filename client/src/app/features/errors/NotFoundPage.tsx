@@ -5,6 +5,7 @@ const NotFoundPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
 
+  if (state == null) return <NotFoundPage />;
   const messageDetail =
     state.error !== null
       ? state.error.detail

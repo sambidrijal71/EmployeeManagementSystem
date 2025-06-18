@@ -53,12 +53,6 @@ const EmployeeForm = ({
     reset,
     formState: { isValid, isDirty },
   } = useForm<Employee>({
-    defaultValues: {
-      firstName: 'Sambid Prasad',
-      lastName: 'Hello Boys',
-      email: 'aasdasdas@b.com',
-      dateOfJoining: '2025-05-14',
-    },
     mode: 'onChange',
   });
 
@@ -144,12 +138,15 @@ const EmployeeForm = ({
               />
             </Grid>
             <Grid size={{ xs: 12 }}>
-              <FormInput
+              <FormInput<Employee>
                 name='dateOfJoining'
                 label='Date of Joining'
                 rules={dateOfJoiningRules}
                 control={control}
-                textFieldProps={{ slotProps: { inputLabel: { shrink: true } } }}
+                textFieldProps={{
+                  slotProps: { inputLabel: { shrink: true } },
+                  type: 'date',
+                }}
               />
             </Grid>
           </Grid>

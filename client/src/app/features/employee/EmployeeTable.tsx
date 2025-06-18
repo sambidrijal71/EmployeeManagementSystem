@@ -79,7 +79,8 @@ const EmployeeTable = ({ employees }: Props) => {
             <Table sx={{ minWidth: 550 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
-                  <TableCell>Id</TableCell>
+                  <TableCell>#</TableCell>
+                  <TableCell align='center'>Employee Id</TableCell>
                   <TableCell align='center'>First Name</TableCell>
                   <TableCell align='center'>Last Name</TableCell>
                   <TableCell align='center'>Email</TableCell>
@@ -89,7 +90,7 @@ const EmployeeTable = ({ employees }: Props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {employees.map((employee) => (
+                {employees.map((employee, index) => (
                   <TableRow
                     key={employee.id}
                     sx={{
@@ -98,8 +99,9 @@ const EmployeeTable = ({ employees }: Props) => {
                     }}
                   >
                     <TableCell component='th' scope='row'>
-                      {employee.id}
+                      {index + 1}
                     </TableCell>
+                    <TableCell align='center'>{employee.id}</TableCell>
                     <TableCell align='center'>{employee.firstName}</TableCell>
                     <TableCell align='center'>{employee.lastName}</TableCell>
                     <TableCell align='center'>{employee.email}</TableCell>
